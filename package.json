@@ -1,0 +1,37 @@
+{
+  "name": "mbtileify",
+  "version": "1.0.0",
+  "description": "Create an MBTiles set from any web map tileset",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node index.js",
+    "watch": "npm run watch-css & npm run watch-js",
+    "watch-css": "./node_modules/.bin/stylus -w assets/css/app.styl -o assets/css/app.css",
+    "watch-js": "./node_modules/.bin/watchify assets/js/main.js -o assets/js/bundle.js",
+    "build": "npm run build-js && npm run build-css",
+    "build-css": "./node_modules/.bin/stylus < assets/css/app.styl > assets/css/app.css ",
+    "build-js": "./node_modules/.bin/browserify assets/js/main.js | ./node_modules/.bin/uglifyjs > assets/js/bundle.js",
+    "dev": "npm start & npm run watch"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/JasonSanford/mbtileify.git"
+  },
+  "author": "Jason Sanford",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/JasonSanford/mbtileify/issues"
+  },
+  "homepage": "https://github.com/JasonSanford/mbtileify",
+  "dependencies": {
+    "express": "^4.12.4",
+    "jade": "^1.10.0"
+  },
+  "devDependencies": {
+    "browserify": "^10.2.1",
+    "stylus": "^0.51.1",
+    "uglify-js": "^2.4.23",
+    "watchify": "^3.2.1"
+  }
+}
