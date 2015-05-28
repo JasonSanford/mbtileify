@@ -5,10 +5,12 @@ html(lang='en')
     meta(http-equiv='X-UA-Compatible' content='IE=edge')
     meta(name='viewport' content='width=device-width, initial-scale=1')
 
+    link(rel='stylesheet', href='//api.tiles.mapbox.com/mapbox.js/v2.1.9/mapbox.css')
     link(rel='stylesheet', href='/css/app.css')
 
     title MBTileify
 
   body
     block content
+    script(src='//api.tiles.mapbox.com/mapbox.js/v2.1.9/mapbox.js')
     script(src='/js/bundle.js')
