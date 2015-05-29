@@ -26,7 +26,8 @@
   "homepage": "https://github.com/JasonSanford/mbtileify",
   "dependencies": {
     "express": "^4.12.4",
-    "jade": "^1.10.0"
+    "jade": "^1.10.0",
+    "tile-cover": "^2.4.1"
   },
   "devDependencies": {
     "browserify": "^10.2.1",

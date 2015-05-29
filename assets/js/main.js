@@ -1,3 +1,5 @@
+var cover = require('tile-cover');
+
 var utils = require('./utils');
 
 function App () {
@@ -8,15 +10,15 @@ function App () {
   this.drawDeleted   = utils.bind(this.drawDeleted, this);
   this.boundsUpdated = utils.bind(this.boundsUpdated, this);
 
-  this.alertIntro = document.querySelectorAll('.alert-intro')[0];
-  this.form       = document.querySelectorAll('.form-horizontal')[0];
-  this.boundsXMin = document.querySelectorAll('.bounds-xmin')[0];
-  this.boundsYMin = document.querySelectorAll('.bounds-ymin')[0];
-  this.boundsXMax = document.querySelectorAll('.bounds-xmax')[0];
-  this.boundsYMax = document.querySelectorAll('.bounds-ymax')[0];
-  this.zooms      = document.querySelectorAll('.min-zoom, .max-zoom');
-  this.minZoom    = document.querySelectorAll('.min-zoom')[0];
-  this.maxZoom    = document.querySelectorAll('.max-zoom')[0];
+  this.alertIntroElem = document.querySelectorAll('.alert-intro')[0];
+  this.formElem       = document.querySelectorAll('.form-horizontal')[0];
+  this.boundsXMinElem = document.querySelectorAll('.bounds-xmin')[0];
+  this.boundsYMinElem = document.querySelectorAll('.bounds-ymin')[0];
+  this.boundsXMaxElem = document.querySelectorAll('.bounds-xmax')[0];
+  this.boundsYMaxElem = document.querySelectorAll('.bounds-ymax')[0];
+  this.zoomElems      = document.querySelectorAll('.min-zoom, .max-zoom');
+  this.minZoomElem    = document.querySelectorAll('.min-zoom')[0];
+  this.maxZoomElem    = document.querySelectorAll('.max-zoom')[0];
 
   this.map = new Map();
 
@@ -26,20 +28,26 @@ function App () {
   this.drawControl = new DrawControl(this.featureGroup);
   this.drawControl.control.addTo(this.map);
 
+  this.tileCountDisplay = new TileCountDisplay();
+
   this.map.on('draw:created',   this.drawCreated);
   this.map.on('draw:drawstart', this.drawStart);
   this.map.on('draw:editstop',  this.boundsUpdated);
   this.map.on('draw:deleted',   this.drawDeleted);
-  [].forEach.call(this.zooms, function (zoom) {
+  [].forEach.call(this.zoomElems, function (zoom) {
     zoom.addEventListener('change', function (event) {
       var value = parseInt(this.value, 10);
       if (zoom.classList.contains('min-zoom')) {
-        if (value > parseInt(me.maxZoom.value, 10)) {
-          this.value = me.maxZoom.value;
+        if (value > parseInt(me.maxZoomElem.value, 10)) {
+          this.value = me.maxZoomElem.value;
+        } else {
+          me.calculateTileCover();
         }
       } else {
-        if (value < parseInt(me.minZoom.value, 10)) {
-          this.value = me.minZoom.value;
+        if (value < parseInt(me.minZoomElem.value, 10)) {
+          this.value = me.minZoomElem.value;
+        } else {
+          me.calculateTileCover();
         }
       }
     }, false);
@@ -47,8 +55,9 @@ function App () {
 }
 
 App.prototype.drawStart = function () {
-  this.alertIntro.style.display = 'none';
-  this.form.style.display = 'block';
+  this.alertIntroElem.style.display = 'none';
+  this.formElem.style.display = 'block';
+  this.tileCountDisplay.show();
   this.clearCurrentFeature();
 };
 
@@ -58,8 +67,10 @@ App.prototype.drawCreated = function (event) {
 };
 
 App.prototype.drawDeleted = function () {
-  this.alertIntro.style.display = 'block';
-  this.form.style.display = 'none';
+  this.alertIntroElem.style.display = 'block';
+  this.formElem.style.display = 'none';
+  this.tileCountDisplay.clear();
+  this.tileCountDisplay.hide();
   this.boundsUpdated();
 };
 
@@ -76,13 +87,44 @@ App.prototype.boundsUpdated = function () {
     var sw = this.bounds.getSouthWest();
     var ne = this.bounds.getNorthEast();
 
-    this.boundsXMin.value = sw.lng;
-    this.boundsYMin.value = sw.lat;
-    this.boundsXMax.value = ne.lng;
-    this.boundsYMax.value = ne.lat;
+    this.boundsXMinElem.value = sw.lng;
+    this.boundsYMinElem.value = sw.lat;
+    this.boundsXMaxElem.value = ne.lng;
+    this.boundsYMaxElem.value = ne.lat;
+
+    this.calculateTileCover();
   } else {
     this.bounds = null;
   }
+};
+
+App.prototype.calculateTileCover = function () {
+  var minZoom = parseInt(this.minZoomElem.value, 10);
+  var maxZoom = parseInt(this.maxZoomElem.value, 10);
+
+  var sw = this.bounds.getSouthWest();
+  var ne = this.bounds.getNorthEast();
+
+  var geom = {
+    type: 'Polygon', coordinates: [
+      [
+        [sw.lng, sw.lat],
+        [sw.lng, ne.lat],
+        [ne.lng, ne.lat],
+        [ne.lng, sw.lat],
+        [sw.lng, sw.lat]
+      ]
+    ]
+  };
+
+  var tiles = {};
+
+  for (var i = minZoom; i <= maxZoom; i++) {
+    tiles[i] = cover.tiles(geom, { min_zoom: i, max_zoom: i });
+  }
+
+  this.tileCountDisplay.update(tiles);
+  this.tileCountDisplay.show();
 };
 
 function Map () {
@@ -91,6 +133,40 @@ function Map () {
 
   return map;
 }
+
+function TileCountDisplay () {
+  this.container = document.querySelectorAll('.tile-count-display')[0];
+  this.display = document.querySelectorAll('.tile-count')[0];
+}
+
+TileCountDisplay.prototype.update = function (tiles) {
+  var zoom, zoomTiles;
+  var htmlParts = [];
+  var totalCount = 0;
+
+  for (zoom in tiles) {
+    zoomTiles = tiles[zoom];
+    totalCount += zoomTiles.length;
+    htmlParts.push('<h5>' + zoom + ': <small>' + zoomTiles.length + '</small></h5>');
+  }
+
+  htmlParts.push('<hr>');
+  htmlParts.push('<h5>Total: <small>' + totalCount + '</small></h5>');
+
+  this.display.innerHTML = htmlParts.join('');
+};
+
+TileCountDisplay.prototype.clear = function () {
+  this.display.innerHTML = '';
+};
+
+TileCountDisplay.prototype.show = function () {
+  this.container.style.display = 'block';
+};
+
+TileCountDisplay.prototype.hide = function () {
+  this.container.style.display = 'none';
+};
 
 function DrawControl (featureGroup) {
   this.control = new L.Control.Draw({

@@ -23,7 +23,8 @@ body {
   float: left;
   padding: 10px;
 }
-.wrapper .left form {
+.wrapper .left form,
+.wrapper .left .tile-count-display {
   display: none;
 }
 
