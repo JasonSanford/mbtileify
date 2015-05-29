@@ -23,4 +23,7 @@ body {
   float: left;
   padding: 10px;
 }
+.wrapper .left form {
+  display: none;
+}
 

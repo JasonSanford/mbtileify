@@ -6,4 +6,29 @@ block content
       h2 MBTilify
       .alert.alert-info.alert-intro
         p Use the draw controls on the map to create a bounding box for the area to fetch tiles.
+      form.form-horizontal
+        .form-group
+          label.col-sm-3.control-label xmin
+          .col-sm-9
+            input(type='text', disabled='yup').form-control.bounds-xmin.input-sm
+        .form-group
+          label.col-sm-3.control-label ymin
+          .col-sm-9
+            input(type='text', disabled='yup').form-control.bounds-ymin.input-sm
+        .form-group
+          label.col-sm-3.control-label xmax
+          .col-sm-9
+            input(type='text', disabled='yup').form-control.bounds-xmax.input-sm
+        .form-group
+          label.col-sm-3.control-label ymax
+          .col-sm-9
+            input(type='text', disabled='yup').form-control.bounds-ymax.input-sm
+        .form-group
+          label.col-sm-3.control-label min zoom
+          .col-sm-9
+            input(type='number', value='5', min=0, max=22, step='1').form-control.min-zoom.input-sm
+        .form-group
+          label.col-sm-3.control-label max zoom
+          .col-sm-9
+            input(type='number', value='10', min=0, max=22, step='1').form-control.max-zoom.input-sm
     .map(id='map')
