@@ -25,9 +25,15 @@
   },
   "homepage": "https://github.com/JasonSanford/mbtileify",
   "dependencies": {
+    "async": "^1.2.1",
     "express": "^4.12.4",
     "jade": "^1.10.0",
-    "tile-cover": "^2.4.1"
+    "mbtiles": "^0.8.0",
+    "tile-cover": "^2.4.1",
+    "tilejson": "^0.13.0",
+    "tilelive": "^5.7.1",
+    "tilelive-http": "^0.7.0",
+    "tilelive-streaming": "^0.4.0"
   },
   "devDependencies": {
     "browserify": "^10.2.1",
