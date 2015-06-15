@@ -5,10 +5,11 @@ var utils = require('./utils');
 function App () {
   var me = this;
 
-  this.drawCreated   = utils.bind(this.drawCreated, this);
-  this.drawStart     = utils.bind(this.drawStart, this);
-  this.drawDeleted   = utils.bind(this.drawDeleted, this);
-  this.boundsUpdated = utils.bind(this.boundsUpdated, this);
+  this.drawCreated    = utils.bind(this.drawCreated, this);
+  this.drawStart      = utils.bind(this.drawStart, this);
+  this.drawDeleted    = utils.bind(this.drawDeleted, this);
+  this.boundsUpdated  = utils.bind(this.boundsUpdated, this);
+  this.tileUrlChanged = utils.bind(this.tileUrlChanged, this);
 
   this.alertIntroElem = document.querySelectorAll('.alert-intro')[0];
   this.formElem       = document.querySelectorAll('.form-horizontal')[0];
@@ -19,8 +20,11 @@ function App () {
   this.zoomElems      = document.querySelectorAll('.min-zoom, .max-zoom');
   this.minZoomElem    = document.querySelectorAll('.min-zoom')[0];
   this.maxZoomElem    = document.querySelectorAll('.max-zoom')[0];
+  this.tileUrlElem    = document.querySelectorAll('.tile-url')[0];
 
   this.map = new Map();
+  this.overlayTileLayer = new L.TileLayer(this.tileUrlElem.value);
+  this.map.addLayer(this.overlayTileLayer);
 
   this.featureGroup = L.featureGroup();
   this.featureGroup.addTo(this.map);
@@ -34,6 +38,9 @@ function App () {
   this.map.on('draw:drawstart', this.drawStart);
   this.map.on('draw:editstop',  this.boundsUpdated);
   this.map.on('draw:deleted',   this.drawDeleted);
+
+  this.tileUrlElem.oninput = this.tileUrlChanged;
+
   [].forEach.call(this.zoomElems, function (zoom) {
     zoom.addEventListener('change', function (event) {
       var value = parseInt(this.value, 10);
@@ -53,6 +60,10 @@ function App () {
     }, false);
   });
 }
+
+App.prototype.tileUrlChanged = function () {
+  this.overlayTileLayer.setUrl(this.tileUrlElem.value);
+};
 
 App.prototype.drawStart = function () {
   this.alertIntroElem.style.display = 'none';
