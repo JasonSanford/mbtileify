@@ -1,35 +1,20 @@
-var async = require('async');
-var tilelive = require('tilelive-streaming')(require('tilelive'), {
-  concurrency: 4
-});
+var kue = require('kue');
 
-require('mbtiles').registerProtocols(tilelive);
-require('tilelive-http')(tilelive);
+var fetchTilesQueueName = require('./constants').fetchTilesQueueName;
 
-module.exports = function (minZoom, maxZoom, bounds, tileUrl, email) {
-  async.parallel(
-    {
-      source: async.apply(tilelive.load, template),
-      sink: async.apply(tilelive.load, 'mbtiles://./tiles.mbtiles')
-    },
-    function (error, result) {
-      var source = result.source;
-      var sink = result.sink;
-      var writeStream = sink.createWriteStream();
+var queue = kue.createQueue();
 
-      source
-        .createReadStream({
-          minzoom: minZoom,
-          maxzoom: maxZoom,
-          bounds: bounds
-        })
-        .pipe(writeStream)
-        .on('tile', function (tile) {
-          console.log("%d/%d/%d\t%d", tile.z, tile.x, tile.y, tile.length);
-        })
-        .on('finish', function () {
-          console.log('Done');
-        });
-    }
-  );
+module.exports = function (minZoom, maxZoom, bounds, tileUrl, callback) {
+  var jobData = {
+    minZoom: minZoom,
+    maxZoom: maxZoom,
+    bounds: bounds,
+    tileUrl: tileUrl
+  };
+
+  var job = queue.create(fetchTilesQueueName, jobData);
+  job.on('enqueue', function () {
+    callback(null, job);
+  });
+  job.save();
 };

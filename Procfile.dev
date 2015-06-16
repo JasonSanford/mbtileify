@@ -1,0 +1,3 @@
+web: npm start
+redis: redis-server redis.dev.conf
+worker: npm run worker

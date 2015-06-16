@@ -1,5 +1,8 @@
 var express = require('express');
 var bodyParser = require('body-parser');
+var kue = require('kue');
+
+var createTiles = require('./create_tiles');
 
 var app = express();
 
@@ -12,9 +15,25 @@ app.get('/', function (req, res) {
   res.render('index');
 });
 
+app.get('/jobs/:id', function (req, res) {
+  kue.Job.get(req.params.id, function (error, job) {
+    res.render('job', {job: job});
+  });
+});
+
 app.post('/create_tiles', function (req, res) {
-  console.log(JSON.stringify(req.body));
-  res.json({ok: 'dude'});
+  var body = req.body;
+  var minZoom = parseInt(body.min_zoom, 10);
+  var maxZoom = parseInt(body.max_zoom, 10);
+  var bounds = [
+    parseFloat(body.xmin), parseFloat(body.ymin),
+    parseFloat(body.xmax), parseFloat(body.ymax)
+  ];
+  var tileUrl = body.tile_url;
+
+  createTiles(minZoom, maxZoom, bounds, tileUrl, function (error, job) {
+    res.redirect('/jobs/' + job.id);
+  });
 });
 
 var port = Number(process.env.PORT || 5000);
