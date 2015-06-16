@@ -10,17 +10,22 @@ function App () {
   this.drawDeleted    = utils.bind(this.drawDeleted, this);
   this.boundsUpdated  = utils.bind(this.boundsUpdated, this);
   this.tileUrlChanged = utils.bind(this.tileUrlChanged, this);
+  this.onsubmit       = utils.bind(this.onsubmit, this);
 
-  this.alertIntroElem = document.querySelectorAll('.alert-intro')[0];
-  this.formElem       = document.querySelectorAll('.form-horizontal')[0];
-  this.boundsXMinElem = document.querySelectorAll('.bounds-xmin')[0];
-  this.boundsYMinElem = document.querySelectorAll('.bounds-ymin')[0];
-  this.boundsXMaxElem = document.querySelectorAll('.bounds-xmax')[0];
-  this.boundsYMaxElem = document.querySelectorAll('.bounds-ymax')[0];
-  this.zoomElems      = document.querySelectorAll('.min-zoom, .max-zoom');
-  this.minZoomElem    = document.querySelectorAll('.min-zoom')[0];
-  this.maxZoomElem    = document.querySelectorAll('.max-zoom')[0];
-  this.tileUrlElem    = document.querySelectorAll('.tile-url')[0];
+  this.alertIntroElem       = document.querySelectorAll('.alert-intro')[0];
+  this.formElem             = document.querySelectorAll('.form-horizontal')[0];
+  this.boundsXMinElem       = document.querySelectorAll('.bounds-xmin')[0];
+  this.boundsYMinElem       = document.querySelectorAll('.bounds-ymin')[0];
+  this.boundsXMaxElem       = document.querySelectorAll('.bounds-xmax')[0];
+  this.boundsYMaxElem       = document.querySelectorAll('.bounds-ymax')[0];
+  this.boundsXMinHiddenElem = document.querySelectorAll('.bounds-xmin-hidden')[0];
+  this.boundsYMinHiddenElem = document.querySelectorAll('.bounds-ymin-hidden')[0];
+  this.boundsXMaxHiddenElem = document.querySelectorAll('.bounds-xmax-hidden')[0];
+  this.boundsYMaxHiddenElem = document.querySelectorAll('.bounds-ymax-hidden')[0];
+  this.zoomElems            = document.querySelectorAll('.min-zoom, .max-zoom');
+  this.minZoomElem          = document.querySelectorAll('.min-zoom')[0];
+  this.maxZoomElem          = document.querySelectorAll('.max-zoom')[0];
+  this.tileUrlElem          = document.querySelectorAll('.tile-url')[0];
 
   this.map = new Map();
   this.overlayTileLayer = new L.TileLayer(this.tileUrlElem.value);
@@ -40,6 +45,7 @@ function App () {
   this.map.on('draw:deleted',   this.drawDeleted);
 
   this.tileUrlElem.oninput = this.tileUrlChanged;
+  this.formElem.onsubmit = this.onsubmit;
 
   [].forEach.call(this.zoomElems, function (zoom) {
     zoom.addEventListener('change', function (event) {
@@ -60,6 +66,11 @@ function App () {
     }, false);
   });
 }
+
+App.prototype.onsubmit = function (event) {
+  //event.preventDefault();
+  //window.alert('prevented');
+};
 
 App.prototype.tileUrlChanged = function () {
   this.overlayTileLayer.setUrl(this.tileUrlElem.value);
@@ -102,6 +113,11 @@ App.prototype.boundsUpdated = function () {
     this.boundsYMinElem.value = sw.lat;
     this.boundsXMaxElem.value = ne.lng;
     this.boundsYMaxElem.value = ne.lat;
+
+    this.boundsXMinHiddenElem.value = sw.lng;
+    this.boundsYMinHiddenElem.value = sw.lat;
+    this.boundsXMaxHiddenElem.value = ne.lng;
+    this.boundsYMaxHiddenElem.value = ne.lat;
 
     this.calculateTileCover();
   } else {

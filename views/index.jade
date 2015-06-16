@@ -3,38 +3,49 @@ extends base
 block content
   .wrapper
     .left
-      h2 MBTilify
+      h2 MBTileify
       .alert.alert-info.alert-intro
         p Use the draw controls on the map to create a bounding box for the area to fetch tiles.
-      form.form-horizontal
+      form.form-horizontal(action='/create_tiles', method='post')
         .form-group
           label.col-sm-3.control-label xmin
           .col-sm-9
             input(type='text', disabled='yup').form-control.bounds-xmin.input-sm
+            input(type='hidden', name='xmin').bounds-xmin-hidden
         .form-group
           label.col-sm-3.control-label ymin
           .col-sm-9
             input(type='text', disabled='yup').form-control.bounds-ymin.input-sm
+            input(type='hidden', name='ymin').bounds-ymin-hidden
         .form-group
           label.col-sm-3.control-label xmax
           .col-sm-9
             input(type='text', disabled='yup').form-control.bounds-xmax.input-sm
+            input(type='hidden', name='xmax').bounds-xmax-hidden
         .form-group
           label.col-sm-3.control-label ymax
           .col-sm-9
             input(type='text', disabled='yup').form-control.bounds-ymax.input-sm
+            input(type='hidden', name='ymax').bounds-ymax-hidden
         .form-group
           label.col-sm-3.control-label min zoom
           .col-sm-9
-            input(type='number', value='5', min=0, max=22, step='1').form-control.min-zoom.input-sm
+            input(type='number', value='5', min=0, max=22, step='1', name='min_zoom').form-control.min-zoom.input-sm
         .form-group
           label.col-sm-3.control-label max zoom
           .col-sm-9
-            input(type='number', value='10', min=0, max=22, step='1').form-control.max-zoom.input-sm
+            input(type='number', value='10', min=0, max=22, step='1', name='max_zoom').form-control.max-zoom.input-sm
         .form-group
           label.col-sm-3.control-label tile url
           .col-sm-9
-            input(type='text', value='http://tile.openstreetmap.org/{z}/{x}/{y}.png').form-control.tile-url.input-sm
+            input(type='text', value='http://tile.openstreetmap.org/{z}/{x}/{y}.png', name='tile_url').form-control.tile-url.input-sm
+        .form-group
+          label.col-sm-3.control-label email
+          .col-sm-9
+            input(type='text', name='email').form-control.email.input-sm
+        .form-group
+          .col-sm-9.col-sm-offset-3
+            button(type='submit').btn.btn-primary Create MBTiles
       .tile-count-display
         h4 Tiles in Current Bounds
         .tile-count
