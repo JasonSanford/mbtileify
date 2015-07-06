@@ -14,14 +14,11 @@ function App () {
 
   this.alertIntroElem       = document.querySelectorAll('.alert-intro')[0];
   this.formElem             = document.querySelectorAll('.form-horizontal')[0];
-  this.boundsXMinElem       = document.querySelectorAll('.bounds-xmin')[0];
-  this.boundsYMinElem       = document.querySelectorAll('.bounds-ymin')[0];
-  this.boundsXMaxElem       = document.querySelectorAll('.bounds-xmax')[0];
-  this.boundsYMaxElem       = document.querySelectorAll('.bounds-ymax')[0];
   this.boundsXMinHiddenElem = document.querySelectorAll('.bounds-xmin-hidden')[0];
   this.boundsYMinHiddenElem = document.querySelectorAll('.bounds-ymin-hidden')[0];
   this.boundsXMaxHiddenElem = document.querySelectorAll('.bounds-xmax-hidden')[0];
   this.boundsYMaxHiddenElem = document.querySelectorAll('.bounds-ymax-hidden')[0];
+  this.totalCountElem       = document.querySelectorAll('.total-count')[0];
   this.zoomElems            = document.querySelectorAll('.min-zoom, .max-zoom');
   this.minZoomElem          = document.querySelectorAll('.min-zoom')[0];
   this.maxZoomElem          = document.querySelectorAll('.max-zoom')[0];
@@ -109,11 +106,6 @@ App.prototype.boundsUpdated = function () {
     var sw = this.bounds.getSouthWest();
     var ne = this.bounds.getNorthEast();
 
-    this.boundsXMinElem.value = sw.lng;
-    this.boundsYMinElem.value = sw.lat;
-    this.boundsXMaxElem.value = ne.lng;
-    this.boundsYMaxElem.value = ne.lat;
-
     this.boundsXMinHiddenElem.value = sw.lng;
     this.boundsYMinHiddenElem.value = sw.lat;
     this.boundsXMaxHiddenElem.value = ne.lng;
@@ -151,12 +143,13 @@ App.prototype.calculateTileCover = function () {
   }
 
   this.tileCountDisplay.update(tiles);
+  this.totalCountElem.value = this.tileCountDisplay.getTotal()
   this.tileCountDisplay.show();
 };
 
 function Map () {
   L.mapbox.accessToken = 'pk.eyJ1IjoiamNzYW5mb3JkIiwiYSI6InRJMHZPZFUifQ.F4DMGoNgU3r2AWLY0Eni-w';
-  var map = L.mapbox.map('map', 'jcsanford.kmdnbkib');
+  var map = new L.Map('map', {center: [40, -100], zoom: 4});
 
   return map;
 }
@@ -177,6 +170,8 @@ TileCountDisplay.prototype.update = function (tiles) {
     htmlParts.push('<h5>' + zoom + ': <small>' + zoomTiles.length + '</small></h5>');
   }
 
+  this.total = totalCount;
+
   htmlParts.push('<hr>');
   htmlParts.push('<h5>Total: <small>' + totalCount + '</small></h5>');
 
@@ -193,6 +188,10 @@ TileCountDisplay.prototype.show = function () {
 
 TileCountDisplay.prototype.hide = function () {
   this.container.style.display = 'none';
+};
+
+TileCountDisplay.prototype.getTotal = function () {
+  return this.total;
 };
 
 function DrawControl (featureGroup) {

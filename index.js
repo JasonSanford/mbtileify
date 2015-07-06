@@ -22,16 +22,17 @@ app.get('/jobs/:id', function (req, res) {
 });
 
 app.post('/create_tiles', function (req, res) {
-  var body = req.body;
-  var minZoom = parseInt(body.min_zoom, 10);
-  var maxZoom = parseInt(body.max_zoom, 10);
-  var bounds = [
+  var body       = req.body;
+  var tileUrl    = body.tile_url;
+  var minZoom    = parseInt(body.min_zoom, 10);
+  var maxZoom    = parseInt(body.max_zoom, 10);
+  var totalCount = parseInt(body.total_count, 10);
+  var bounds     = [
     parseFloat(body.xmin), parseFloat(body.ymin),
     parseFloat(body.xmax), parseFloat(body.ymax)
   ];
-  var tileUrl = body.tile_url;
 
-  createTiles(minZoom, maxZoom, bounds, tileUrl, function (error, job) {
+  createTiles(minZoom, maxZoom, bounds, tileUrl, totalCount, function (error, job) {
     res.redirect('/jobs/' + job.id);
   });
 });

@@ -4,12 +4,13 @@ var fetchTilesQueueName = require('./constants').fetchTilesQueueName;
 
 var queue = kue.createQueue();
 
-module.exports = function (minZoom, maxZoom, bounds, tileUrl, callback) {
+module.exports = function (minZoom, maxZoom, bounds, tileUrl, totalCount, callback) {
   var jobData = {
     minZoom: minZoom,
     maxZoom: maxZoom,
     bounds: bounds,
-    tileUrl: tileUrl
+    tileUrl: tileUrl,
+    totalCount: totalCount
   };
 
   var job = queue.create(fetchTilesQueueName, jobData);
