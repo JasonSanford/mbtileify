@@ -11,13 +11,64 @@ app.use(bodyParser.urlencoded({ extended: true }));
 app.set('views', __dirname + '/views');
 app.set('view engine', 'jade');
 
+function render404 (req, res) {
+  res.status(404);
+  res.render('404');
+}
+
 app.get('/', function (req, res) {
-  res.render('index');
+  res.render('index', {
+    bodyClass: 'index'
+  });
+});
+
+app.use('/jobs/:id', function (req, res, next) {
+  var id = req.params.id;
+
+  if (!id) {
+    render404(req, res);
+    return;
+  }
+
+  // For some reason /jobs/99.geojson gets passed with '.json' in the slug
+  // TODO: There's probably a better way
+  if (id.indexOf('.') > -1) {
+    id = id.split('.')[0];
+  }
+
+  kue.Job.get(id, function (error, job) {
+    if (error) {
+      render404(req, res);
+    } else {
+      job = JSON.parse(JSON.stringify(job));
+      job.progress = parseInt(job.progress, 10);
+      var bounds = job.data.bounds;
+      job.boundsGeoJSON = {
+        type: 'Polygon',
+        coordinates: [
+          [
+            [bounds[0], bounds[1]],
+            [bounds[0], bounds[3]],
+            [bounds[2], bounds[3]],
+            [bounds[2], bounds[1]],
+            [bounds[0], bounds[1]],
+          ]
+        ]
+      }
+      req.job = job;
+      next();
+    }
+  });
+});
+
+app.get('/jobs/:id.json', function (req, res) {
+  res.json(req.job);
 });
 
 app.get('/jobs/:id', function (req, res) {
-  kue.Job.get(req.params.id, function (error, job) {
-    res.render('job', {job: job});
+  res.render('job', {
+    job: req.job,
+    bodyClass: 'job'
   });
 });
 

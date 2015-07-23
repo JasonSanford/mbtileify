@@ -27,4 +27,7 @@ body {
 .wrapper .left .tile-count-display {
   display: none;
 }
+body.job .map {
+  height: 300px;
+}
 

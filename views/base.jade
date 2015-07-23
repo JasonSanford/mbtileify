@@ -12,8 +12,11 @@ html(lang='en')
 
     title MBTileify
 
-  body
+  body(class=(bodyClass || ''))
     block content
     script(src='//api.tiles.mapbox.com/mapbox.js/v2.1.9/mapbox.js')
     script(src='//api.tiles.mapbox.com/mapbox.js/plugins/leaflet-draw/v0.2.2/leaflet.draw.js')
+    script.
+      window.mbtileify = {};
+    block javascript
     script(src='/js/bundle.js')
