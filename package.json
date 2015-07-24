@@ -32,6 +32,7 @@
     "jade": "^1.10.0",
     "kue": "^0.9.3",
     "mbtiles": "^0.8.0",
+    "superagent": "^1.2.0",
     "tile-cover": "^2.4.1",
     "tilejson": "^0.13.0",
     "tilelive": "^5.7.1",

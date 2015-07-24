@@ -3,6 +3,7 @@ extends base
 block javascript
   script.
     mbtileify.jobBoundsGeoJSON = !{JSON.stringify(job.boundsGeoJSON)};
+    mbtileify.jobId = #{job.id};
 
 block content
   .container
