@@ -4,11 +4,15 @@ block javascript
   script.
     mbtileify.jobBoundsGeoJSON = !{JSON.stringify(job.boundsGeoJSON)};
     mbtileify.jobId = #{job.id};
+    mbtileify.jobProgress = #{job.progress};
 
 block content
   .container
     h3 Job #{job.id}
     #map.map
     h4 Progress
-    .progress
-      .progress-bar(role='progressbar', aria-valuenow='#{job.progress}', aria-valuemin='0', aria-valuemax='100', style='min-width: 2em; width: #{job.progress}%') #{job.progress}%
+    if job.state === 'complete'
+      h3 Done!
+    else
+      .progress
+        .progress-bar(role='progressbar', aria-valuenow='#{job.progress}', aria-valuemin='0', aria-valuemax='100', style='min-width: 2em; width: #{job.progress}%') #{job.progress}%

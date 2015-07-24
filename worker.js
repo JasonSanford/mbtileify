@@ -22,7 +22,7 @@ queue.process(fetchTilesQueueName, function (job, done) {
       var source      = result.source;
       var sink        = result.sink;
       var writeStream = sink.createWriteStream();
-      var completed = 0;
+      var completed   = 0;
 
       source
         .createReadStream({
@@ -32,12 +32,10 @@ queue.process(fetchTilesQueueName, function (job, done) {
         })
         .pipe(writeStream)
         .on('tile', function (tile) {
-          console.log("%d/%d/%d\t%d", tile.z, tile.x, tile.y, tile.length);
           completed++;
           job.progress(completed, job.data.totalCount);
         })
         .on('finish', function () {
-          console.log('Done with tileification');
           done();
         });
     }

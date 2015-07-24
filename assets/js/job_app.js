@@ -14,13 +14,19 @@ function JobApp () {
   boundsLayer.addTo(map);
   map.fitBounds(boundsLayer.getBounds());
 
+  if (mbtileify.jobProgress < 100) {
+    initiateJobProgress()
+  }
+}
+
+function initiateJobProgress () {
   var inerval;
   var progressBarElem = document.querySelectorAll('.progress-bar')[0];
 
   function checkProgress () {
     request
       .get('/jobs/' + window.mbtileify.jobId + '.json')
-      .end(processProgress)
+      .end(processProgress);
   }
 
   function processProgress (error, resp) {
@@ -30,19 +36,20 @@ function JobApp () {
       return;
     }
 
-    var body = resp.body;
-    var progressPercentage = body.progress + '%'
+    var body               = resp.body;
+    var percentage         = (body.progress >= 100 ? 99 : body.progress);
+    var progressPercentage = percentage + '%'
 
     progressBarElem.style.width = progressPercentage;
-    progressBarElem.innerText = progressPercentage;
+    progressBarElem.innerText   = progressPercentage;
 
-    if (body.progress >= 100) {
+    if (body.state === 'complete') {
       window.clearInterval(interval);
-      console.log('Done!')
+      document.location.reload(true);
     }
   }
 
-  interval = window.setInterval(checkProgress, 3000)
+  interval = window.setInterval(checkProgress, 3000);
 }
 
 module.exports = JobApp;
