@@ -30,6 +30,7 @@
     "body-parser": "^1.13.0",
     "express": "^4.12.4",
     "jade": "^1.10.0",
+    "knox": "^0.9.2",
     "kue": "^0.9.3",
     "mbtiles": "^0.8.0",
     "superagent": "^1.2.0",

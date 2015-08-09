@@ -1,5 +1,6 @@
 var async = require('async');
 var kue = require('kue');
+var knox = require('knox');
 var tilelive = require('tilelive-streaming')(require('tilelive'), {
   concurrency: 1
 });
@@ -9,14 +10,22 @@ require('tilelive-http')(tilelive);
 
 var queue = kue.createQueue();
 
-var fetchTilesQueueName = require('./constants').fetchTilesQueueName;
+var constants = require('./constants');
 
-queue.process(fetchTilesQueueName, function (job, done) {
+var client = knox.createClient({
+    key: constants.awsKeyId,
+    secret: constants.awsAccessKey,
+    bucket: constants.awsBucket
+});
+
+queue.process(constants.fetchTilesQueueName, function (job, done) {
   console.log('Starting job fetching ' + job.data.totalCount + ' tiles.')
+  var fileName = job.id + '.mbtiles'
+  var filePath = './' + fileName;
   async.parallel(
     {
       source: async.apply(tilelive.load, job.data.tileUrl),
-      sink: async.apply(tilelive.load, 'mbtiles://./tiles.mbtiles')
+      sink: async.apply(tilelive.load, 'mbtiles://' + filePath)
     },
     function (error, result) {
       var source      = result.source;
@@ -36,7 +45,13 @@ queue.process(fetchTilesQueueName, function (job, done) {
           job.progress(completed, job.data.totalCount);
         })
         .on('finish', function () {
-          done();
+          client.putFile(filePath, fileName, function (error, resp) {
+            if (error) {
+              console.log('Error uploading: ', error);
+            } else {
+              done();
+            }
+          });
         });
     }
   );
