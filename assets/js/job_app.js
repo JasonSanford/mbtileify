@@ -3,7 +3,7 @@ var request = require('superagent');
 var Map = require('./map');
 
 function JobApp () {
-  var map = new Map();
+  var map = new Map(mbtileify.jobTileUrl, {minZoom: mbtileify.jobMinZoom, maxZoom: mbtileify.jobMaxZoom});
   var boundsLayer = new L.GeoJSON(window.mbtileify.jobBoundsGeoJSON, {
     color: '#333',
     opacity: 0.9,

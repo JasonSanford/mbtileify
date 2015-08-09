@@ -1,6 +1,23 @@
-function Map () {
-  L.mapbox.accessToken = 'pk.eyJ1IjoiamNzYW5mb3JkIiwiYSI6InRJMHZPZFUifQ.F4DMGoNgU3r2AWLY0Eni-w';
-  var map = new L.mapbox.Map('map', 'jcsanford.kmdnbkib', {center: [40, -100], zoom: 4});
+function Map (tileUrl, options) {
+  var map;
+
+  var opts = {
+    center: [40, -100],
+    zoom: 4
+  };
+
+  if (options && options.minZoom && options.maxZoom) {
+    opts.minZoom = options.minZoom;
+    opts.maxZoom = options.maxZoom;
+    opts.zoom = options.minZoom;
+  }
+
+  if (tileUrl) {
+    map = new L.Map('map', opts);
+    L.tileLayer(tileUrl).addTo(map);
+  } else {
+    map = new L.mapbox.Map('map', 'jcsanford.kmdnbkib', opts);
+  }
 
   return map;
 }

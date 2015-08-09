@@ -5,6 +5,9 @@ block javascript
     mbtileify.jobBoundsGeoJSON = !{JSON.stringify(job.boundsGeoJSON)};
     mbtileify.jobId = #{job.id};
     mbtileify.jobProgress = #{job.progress};
+    mbtileify.jobTileUrl = '!{job.data.tileUrl}';
+    mbtileify.jobMinZoom = #{job.data.minZoom};
+    mbtileify.jobMaxZoom = #{job.data.maxZoom};
 
 block content
   .container
