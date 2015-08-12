@@ -3,7 +3,8 @@ function Map (tileUrl, options) {
 
   var opts = {
     center: [40, -100],
-    zoom: 4
+    zoom: 4,
+    maxZoom: 20
   };
 
   if (options && options.minZoom && options.maxZoom) {
@@ -12,11 +13,10 @@ function Map (tileUrl, options) {
     opts.zoom = options.minZoom;
   }
 
+  map = new L.Map('map', opts);
+
   if (tileUrl) {
-    map = new L.Map('map', opts);
-    L.tileLayer(tileUrl).addTo(map);
-  } else {
-    map = new L.mapbox.Map('map', 'jcsanford.kmdnbkib', opts);
+    L.tileLayer(tileUrl, { maxZoom: 20 }).addTo(map);
   }
 
   return map;
