@@ -8,7 +8,15 @@ var tilelive = require('tilelive-streaming')(require('tilelive'), {
 require('mbtiles').registerProtocols(tilelive);
 require('tilelive-http')(tilelive);
 
-var queue = kue.createQueue();
+var queue;
+if (process.env.REDISTOGO_URL) {
+  queue = kue.createQueue({
+    redis: process.env.REDISTOGO_URL
+  })
+} else {
+  queue = kue.createQueue()
+}
+
 
 var constants = require('./constants');
 
