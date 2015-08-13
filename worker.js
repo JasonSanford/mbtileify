@@ -11,9 +11,6 @@ require('tilelive-http')(tilelive);
 
 var queue;
 if (process.env.REDISTOGO_URL) {
-  console.log('          %%%%%%%%%%%%%%%%%%%%%%%%')
-  console.log('yep')
-  console.log('          %%%%%%%%%%%%%%%%%%%%%%%%')
   var redisUrl = url.parse(process.env.REDISTOGO_URL)
   queue = kue.createQueue({
     redis: {
@@ -23,9 +20,6 @@ if (process.env.REDISTOGO_URL) {
     }
   })
 } else {
-  console.log('          %%%%%%%%%%%%%%%%%%%%%%%%')
-  console.log('nope')
-  console.log('          %%%%%%%%%%%%%%%%%%%%%%%%')
   queue = kue.createQueue()
 }
 
