@@ -1,5 +1,6 @@
 var async = require('async');
 var kue = require('kue');
+var url = require('url');
 var knox = require('knox');
 var tilelive = require('tilelive-streaming')(require('tilelive'), {
   concurrency: 1
@@ -10,8 +11,13 @@ require('tilelive-http')(tilelive);
 
 var queue;
 if (process.env.REDISTOGO_URL) {
+  var redisUrl = url.parse(process.env.REDISTOGO_URL)
   queue = kue.createQueue({
-    redis: process.env.REDISTOGO_URL
+    redis: {
+      port: redisUrl.port,
+      host: redisUrl.hostname,
+      auth: redisUrl.auth.split(':')[1]
+    }
   })
 } else {
   queue = kue.createQueue()
