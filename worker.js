@@ -23,7 +23,6 @@ if (process.env.REDISTOGO_URL) {
   queue = kue.createQueue()
 }
 
-
 var constants = require('./constants');
 
 var client = knox.createClient({
