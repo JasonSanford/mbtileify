@@ -26,7 +26,7 @@ function SetupApp () {
   this.tileUrlElem          = document.querySelectorAll('.tile-url')[0];
 
   this.map = new Map();
-  this.overlayTileLayer = new L.TileLayer(this.tileUrlElem.value);
+  this.overlayTileLayer = new L.TileLayer(this.tileUrlElem.value, {maxZoom: 20});
   this.map.addLayer(this.overlayTileLayer);
 
   this.featureGroup = L.featureGroup();
