@@ -1,27 +1,13 @@
 var async = require('async');
-var kue = require('kue');
-var url = require('url');
 var knox = require('knox');
 var tilelive = require('tilelive-streaming')(require('tilelive'), {
   concurrency: 1
 });
 
+var queue = require('./create_queue');
+
 require('mbtiles').registerProtocols(tilelive);
 require('tilelive-http')(tilelive);
-
-var queue;
-if (process.env.REDISTOGO_URL) {
-  var redisUrl = url.parse(process.env.REDISTOGO_URL)
-  queue = kue.createQueue({
-    redis: {
-      port: redisUrl.port,
-      host: redisUrl.hostname,
-      auth: redisUrl.auth.split(':')[1]
-    }
-  })
-} else {
-  queue = kue.createQueue()
-}
 
 var constants = require('./constants');
 
