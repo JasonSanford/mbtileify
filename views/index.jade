@@ -3,7 +3,7 @@ extends base
 block content
   .wrapper
     .left
-      h2 MBTileify
+      h1 MBTileify
       .alert.alert-info.alert-intro
         p Use the draw controls on the map to create a bounding box for the area to fetch tiles.
       form.form-horizontal(action='/create_tiles', method='post')
@@ -28,6 +28,6 @@ block content
           .col-sm-9.col-sm-offset-3
             button(type='submit').btn.btn-primary Create MBTiles
       .tile-count-display
-        h4 Tiles in Current Bounds
+        h3 Number of Tiles in Zoom Levels
         .tile-count
     .map(id='map')

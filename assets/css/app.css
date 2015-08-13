@@ -23,7 +23,9 @@ body {
   float: left;
   padding: 10px;
 }
-.wrapper .left form,
+.wrapper .left h1 {
+  margin-top: 0;
+}
 .wrapper .left .tile-count-display {
   display: none;
 }

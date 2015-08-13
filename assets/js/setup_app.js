@@ -66,8 +66,10 @@ function SetupApp () {
 }
 
 SetupApp.prototype.onsubmit = function (event) {
-  //event.preventDefault();
-  //window.alert('prevented');
+  if (!this.bounds) {
+    window.alert('Use the draw controls on the map to create a bounding box for the area to fetch tiles.')
+    event.preventDefault();
+  }
 };
 
 SetupApp.prototype.tileUrlChanged = function () {
@@ -76,7 +78,6 @@ SetupApp.prototype.tileUrlChanged = function () {
 
 SetupApp.prototype.drawStart = function () {
   this.alertIntroElem.style.display = 'none';
-  this.formElem.style.display = 'block';
   this.tileCountDisplay.show();
   this.clearCurrentFeature();
 };
@@ -88,7 +89,6 @@ SetupApp.prototype.drawCreated = function (event) {
 
 SetupApp.prototype.drawDeleted = function () {
   this.alertIntroElem.style.display = 'block';
-  this.formElem.style.display = 'none';
   this.tileCountDisplay.clear();
   this.tileCountDisplay.hide();
   this.boundsUpdated();
@@ -161,13 +161,13 @@ TileCountDisplay.prototype.update = function (tiles) {
   for (zoom in tiles) {
     zoomTiles = tiles[zoom];
     totalCount += zoomTiles.length;
-    htmlParts.push('<h5>' + zoom + ': <small>' + zoomTiles.length + '</small></h5>');
+    htmlParts.push('<h4>' + zoom + ': <small>' + zoomTiles.length + '</small></h4>');
   }
 
   this.total = totalCount;
 
   htmlParts.push('<hr>');
-  htmlParts.push('<h5>Total: <small>' + totalCount + '</small></h5>');
+  htmlParts.push('<h4>Total: <small>' + totalCount + '</small></h4>');
 
   this.display.innerHTML = htmlParts.join('');
 };
